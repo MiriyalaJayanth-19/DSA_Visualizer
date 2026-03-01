@@ -104,6 +104,8 @@ const putBtn = document.getElementById('putBtn');
 const resetBtn = document.getElementById('resetBtn');
 const cacheDisplay = document.getElementById('cacheDisplay');
 const logOutput = document.getElementById('log');
+const hiwPanel = document.getElementById('hiwPanel');
+const cacheEmptyPlaceholder = document.getElementById('cacheEmptyPlaceholder');
 
 let lruCache = new LRUCache(parseInt(capacityInput.value));
 
@@ -124,14 +126,27 @@ function updateVisualization({ highlightKey = null, type = null, evictedKey = nu
     cacheDisplay.innerHTML = ''; // Clear existing nodes
 
     if (currentState.length === 0) {
-        cacheDisplay.innerHTML = '<div class="empty-message">Cache is empty.</div>';
+        // Show empty placeholder inside cache-display and the how-it-works guide below
+        if (cacheEmptyPlaceholder) cacheEmptyPlaceholder.style.display = 'flex';
+        if (hiwPanel) {
+            hiwPanel.style.display = 'flex';
+            // Re-trigger entrance animation
+            hiwPanel.style.animation = 'none';
+            hiwPanel.offsetHeight; // force reflow
+            hiwPanel.style.animation = '';
+        }
         return;
     }
 
+    // Cache has items — hide guide + placeholder
+    if (cacheEmptyPlaceholder) cacheEmptyPlaceholder.style.display = 'none';
+    if (hiwPanel) hiwPanel.style.display = 'none';
+
+
     // Temporarily disable flex gap if we're doing a complex animation
     // to control absolute positioning more easily. Re-enable after animation.
-    cacheDisplay.style.gap = '0px'; 
-    cacheDisplay.style.justifyContent = 'flex-start'; // Align left for positioning
+    cacheDisplay.style.gap = '0px';
+    cacheDisplay.style.justifyContent = 'flex-start';
 
     // Store the initial positions of existing nodes before rendering
     const existingNodeElements = {};
@@ -156,14 +171,16 @@ function updateVisualization({ highlightKey = null, type = null, evictedKey = nu
                 nodeDiv.classList.add('highlight-new');
             }
         } else if (evictedKey === item.key && type === 'evict') {
-             // This case might not happen if evicted item is fully removed before redraw
-             // but can be used for fading out or specific effects.
+            // This case might not happen if evicted item is fully removed before redraw
+            // but can be used for fading out or specific effects.
         }
 
 
         nodeDiv.innerHTML = `
-            <span class="key">Key: ${item.key}</span>
-            <span class="value">Value: ${item.value}</span>
+            <span class="node-label">Key</span>
+            <span class="key">${item.key}</span>
+            <span class="node-label">Value</span>
+            <span class="value">${item.value}</span>
         `;
         cacheDisplay.appendChild(nodeDiv);
         nodeElements.push(nodeDiv);
@@ -174,8 +191,9 @@ function updateVisualization({ highlightKey = null, type = null, evictedKey = nu
         const evictedNodeEl = document.createElement('div'); // Create a temporary element
         evictedNodeEl.classList.add('cache-node', 'highlight-evicted');
         evictedNodeEl.innerHTML = `
-            <span class="key">Key: ${evictedKey}</span>
-            <span class="value">Evicted</span>
+            <span class="node-label">Key</span>
+            <span class="key">${evictedKey}</span>
+            <span class="node-label">Evicted</span>
         `;
         // Position it where it originally was before removal
         const rect = existingNodeElements[evictedKey];
@@ -193,12 +211,12 @@ function updateVisualization({ highlightKey = null, type = null, evictedKey = nu
         // No eviction, or eviction handled by separate logic, just animate existing nodes
         animateNodePositions(nodeElements, existingNodeElements);
     }
-    
+
     // Reset positioning after potential animations finish
     setTimeout(() => {
-        cacheDisplay.style.gap = '15px';
-        cacheDisplay.style.justifyContent = 'center';
-    }, 800); // Give time for animations
+        cacheDisplay.style.gap = '12px';
+        cacheDisplay.style.justifyContent = 'flex-start';
+    }, 850);
 
 }
 
@@ -222,7 +240,7 @@ function animateNodePositions(newNodeElements, oldRects) {
             newNodeEl.style.transition = 'transform 0s'; // No transition for initial move
 
             // Force reflow
-            newNodeEl.offsetWidth; 
+            newNodeEl.offsetWidth;
 
             // Then transition it back to its new position
             newNodeEl.style.transition = 'transform 0.4s ease-in-out';
@@ -287,8 +305,8 @@ putBtn.addEventListener('click', () => {
                 updateVisualization({ highlightKey: key, type: actionType, evictedKey: evictedKey });
             }, { once: true });
         } else {
-             // If for some reason the node isn't found, just update normally
-             updateVisualization({ highlightKey: key, type: actionType, evictedKey: evictedKey });
+            // If for some reason the node isn't found, just update normally
+            updateVisualization({ highlightKey: key, type: actionType, evictedKey: evictedKey });
         }
     } else {
         if (isUpdate) {
