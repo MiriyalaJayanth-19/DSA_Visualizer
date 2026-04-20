@@ -127,7 +127,15 @@
                             <span class="meta-label">LRU</span>
                         </div>
                     </div>
-                    <div class="panel-body panel-body-viz">
+                    <div class="panel-body panel-body-viz" style="display: flex; flex-direction: column; gap: 20px;">
+                        
+                        <div class="hash-map-display" id="hashMapDisplay" style="padding: 10px; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: rgba(0,0,0,0.2);">
+                            <h3 style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 8px;">Hash Map (Key -> Node Address)</h3>
+                            <div id="hashMapContent" style="display: flex; flex-wrap: wrap; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-primary);">
+                                <span style="color: var(--text-muted)">Empty</span>
+                            </div>
+                        </div>
+
                         <div class="cache-display" id="cacheDisplay">
                             <div class="cache-empty-placeholder" id="cacheEmptyPlaceholder">
                                 <span class="cache-empty-icon">🗄️</span>
@@ -303,14 +311,24 @@
                     </div>
                 </div>
 
-                <!-- Log -->
+                <!-- Code & Log -->
                 <div class="panel panel-log" aria-label="BFS step log">
                     <div class="panel-header">
-                        <h2 class="panel-title">Step Log</h2>
+                        <h2 class="panel-title">Pseudo-code & Log</h2>
                         <span class="panel-header-badge">live</span>
                     </div>
-                    <div class="panel-body panel-body-log">
-                        <div id="bfsLog" class="log-output" role="log" aria-live="polite"></div>
+                    <div class="panel-body" style="display: flex; flex-direction: column; h-full;">
+                        <pre id="bfsCode" style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; font-size: 0.75rem; color: var(--text-code); line-height: 1.4; overflow-x: auto; margin-bottom: 12px; font-family: 'JetBrains Mono', monospace;">
+<span id="line1">procedure BFS(G, root) is</span>
+<span id="line2">  let Q be a queue</span>
+<span id="line3">  Q.enqueue(root)</span>
+<span id="line4">  while Q is not empty do</span>
+<span id="line5">    v := Q.dequeue()</span>
+<span id="line6">    if v is not labeled as discovered then</span>
+<span id="line7">      label v as discovered</span>
+<span id="line8">      for all edges from v to w in G.adjacentEdges(v) do</span>
+<span id="line9">        Q.enqueue(w)</span></pre>
+                        <div id="bfsLog" class="log-output" role="log" aria-live="polite" style="flex: 1; min-height: 150px;"></div>
                     </div>
                 </div>
 
@@ -399,14 +417,27 @@
                     </div>
                 </div>
 
-                <!-- Log -->
+                <!-- Code & Log -->
                 <div class="panel panel-log" aria-label="N-Queens backtracking log">
                     <div class="panel-header">
-                        <h2 class="panel-title">Backtracking Log</h2>
+                        <h2 class="panel-title">Pseudo-code & Log</h2>
                         <span class="panel-header-badge">live</span>
                     </div>
-                    <div class="panel-body panel-body-log">
-                        <div id="nqLog" class="log-output" role="log" aria-live="polite"></div>
+                    <div class="panel-body" style="display: flex; flex-direction: column; h-full;">
+                        <pre id="nqCode" style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; font-size: 0.75rem; color: var(--text-code); line-height: 1.4; overflow-x: auto; margin-bottom: 12px; font-family: 'JetBrains Mono', monospace;">
+<span id="nqLine1">function solve(row) {</span>
+<span id="nqLine2">  if (row == N) return true;</span>
+<span id="nqLine3">  for (col = 0; col &lt; N; col++) {</span>
+<span id="nqLine4">    if (isSafe(row, col)) {</span>
+<span id="nqLine5">      board[row] = col;</span>
+<span id="nqLine6">      if (solve(row + 1))</span>
+<span id="nqLine7">        return true;</span>
+<span id="nqLine8">      board[row] = UNASSIGNED; // backtrack</span>
+<span id="nqLine9">    }</span>
+<span id="nqLine10">  }</span>
+<span id="nqLine11">  return false;</span>
+<span id="nqLine12">}</span></pre>
+                        <div id="nqLog" class="log-output" role="log" aria-live="polite" style="flex: 1; min-height: 150px;"></div>
                     </div>
                 </div>
 

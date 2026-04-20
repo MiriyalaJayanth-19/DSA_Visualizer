@@ -60,13 +60,25 @@
     let timerId = null;
     let running = false;
 
-    // ---- Logging -------------------------------------------------
+    // ---- Logging & Code Highlights -------------------------------------------------
     function log(msg, type = 'info') {
         const div = document.createElement('div');
         div.className = `log-${type}`;
         div.textContent = `[Step ${visited.length}] ${msg}`;
         logEl.prepend(div);
         if (logEl.children.length > 80) logEl.removeChild(logEl.lastChild);
+    }
+
+    function highlightLine(lineNum) {
+        for (let i = 1; i <= 9; i++) {
+            const el = document.getElementById(`line${i}`);
+            if (el) {
+                el.style.backgroundColor = (i === lineNum) ? 'rgba(88, 166, 255, 0.3)' : 'transparent';
+                el.style.display = 'block';
+                if (i === lineNum) el.style.borderLeft = '3px solid var(--accent-blue)';
+                else el.style.borderLeft = '3px solid transparent';
+            }
+        }
     }
 
     function updateInfoPanels() {
@@ -186,41 +198,61 @@
 
     // ---- BFS / DFS Generator ------------------------------------
     function* bfsGenerator(startId, mode) {
+        highlightLine(1);
+        yield;
+        
+        highlightLine(2);
         queue = [startId];
         visited = [];
         nodeStates = {};
         GRAPH_NODES.forEach(n => nodeStates[n.id] = STATE.UNVISITED);
+        yield;
+        
+        highlightLine(3);
         nodeStates[startId] = STATE.QUEUED;
         renderSvg();
         log(`Start: node ${startId} enqueued.`, 'info');
         yield;
 
         while (queue.length > 0) {
+            highlightLine(4);
+            yield;
+            
+            highlightLine(5);
             const curr = mode === 'bfs' ? queue.shift() : queue.pop();
             nodeStates[curr] = STATE.CURRENT;
             renderSvg();
             log(`Dequeue node ${curr} → processing.`, 'info');
             yield;
 
-            nodeStates[curr] = STATE.VISITED;
-            visited.push(curr);
-            renderSvg();
-            log(`Visited node ${curr}.`, 'hit');
+            highlightLine(6);
             yield;
+            if (nodeStates[curr] !== STATE.VISITED) {
+                highlightLine(7);
+                nodeStates[curr] = STATE.VISITED;
+                visited.push(curr);
+                renderSvg();
+                log(`Visited node ${curr}.`, 'hit');
+                yield;
 
-            // Sort neighbours for deterministic order
-            const neighbours = [...adj[curr]].sort((a, b) => a - b);
-            for (const nb of neighbours) {
-                if (nodeStates[nb] === STATE.UNVISITED) {
-                    nodeStates[nb] = STATE.QUEUED;
-                    queue.push(nb);
-                    renderSvg();
-                    log(`Enqueue node ${nb} (neighbour of ${curr}).`, 'info');
-                    yield;
+                highlightLine(8);
+                yield;
+                // Sort neighbours for deterministic order
+                const neighbours = [...adj[curr]].sort((a, b) => a - b);
+                for (const nb of neighbours) {
+                    if (nodeStates[nb] === STATE.UNVISITED) {
+                        highlightLine(9);
+                        nodeStates[nb] = STATE.QUEUED;
+                        queue.push(nb);
+                        renderSvg();
+                        log(`Enqueue node ${nb} (neighbour of ${curr}).`, 'info');
+                        yield;
+                    }
                 }
             }
         }
 
+        highlightLine(0); // clear highlight
         log(`${mode.toUpperCase()} complete! Visited order: [${visited.join(' → ')}]`, 'hit');
         renderSvg();
     }

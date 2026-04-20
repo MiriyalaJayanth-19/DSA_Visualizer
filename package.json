@@ -1,0 +1,25 @@
+{
+  "name": "dsa_visualizer",
+  "version": "1.0.0",
+  "description": "- This repo will help in visualizing complex data structure algorithms\r - This is developed based on the my visualizing capabilities.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MiriyalaJayanth-19/DSA_Visualizer.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MiriyalaJayanth-19/DSA_Visualizer/issues"
+  },
+  "homepage": "https://github.com/MiriyalaJayanth-19/DSA_Visualizer#readme",
+  "devDependencies": {
+    "vite": "^8.0.9"
+  }
+}

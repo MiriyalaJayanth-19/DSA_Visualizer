@@ -138,6 +138,20 @@ function updateVisualization({ highlightKey = null, type = null, evictedKey = nu
         return;
     }
 
+    // Update Hash Map Display
+    const hashMapContent = document.getElementById('hashMapContent');
+    if (hashMapContent) {
+        if (currentState.length === 0) {
+            hashMapContent.innerHTML = `<span style="color: var(--text-muted)">Empty</span>`;
+        } else {
+            hashMapContent.innerHTML = Object.keys(lruCache.cache).map(k => `
+                <div style="background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-subtle);">
+                    <span style="color: var(--accent-purple);">${k}</span> <span style="color: var(--text-muted);">→</span> <span style="color: var(--accent-blue);">Node(&amp;${k})</span>
+                </div>
+            `).join('');
+        }
+    }
+
     // Cache has items — hide guide + placeholder
     if (cacheEmptyPlaceholder) cacheEmptyPlaceholder.style.display = 'none';
     if (hiwPanel) hiwPanel.style.display = 'none';
@@ -184,6 +198,18 @@ function updateVisualization({ highlightKey = null, type = null, evictedKey = nu
         `;
         cacheDisplay.appendChild(nodeDiv);
         nodeElements.push(nodeDiv);
+
+        if (index < currentState.length - 1) {
+            const arrowDiv = document.createElement('div');
+            arrowDiv.innerHTML = '⟷';
+            arrowDiv.style.order = index; // Keep order logical
+            arrowDiv.style.color = 'var(--text-muted)';
+            arrowDiv.style.fontSize = '1.5rem';
+            arrowDiv.style.display = 'flex';
+            arrowDiv.style.alignItems = 'center';
+            arrowDiv.classList.add('cache-arrow');
+            cacheDisplay.appendChild(arrowDiv);
+        }
     });
 
     // Handle eviction animation for the item that was removed

@@ -107,7 +107,21 @@
         applyStep(next.value);
     }
 
+    function highlightLine(lineNum) {
+        for (let i = 1; i <= 12; i++) {
+            const el = document.getElementById(`nqLine${i}`);
+            if (el) {
+                el.style.backgroundColor = (i === lineNum) ? 'rgba(188, 140, 255, 0.3)' : 'transparent';
+                el.style.display = 'block';
+                if (i === lineNum) el.style.borderLeft = '3px solid var(--accent-purple)';
+                else el.style.borderLeft = '3px solid transparent';
+            }
+        }
+    }
+
     function applyStep(step) {
+        if (step.line) highlightLine(step.line);
+
         switch (step.type) {
             case 'try': {
                 highlightCell(step.row, step.col, 'is-trying');
@@ -139,6 +153,11 @@
                 stop();
                 break;
             }
+            case 'call_solve':
+            case 'return_true':
+            case 'return_false':
+                // just highlight line
+                break;
             default:
                 break;
         }
@@ -199,30 +218,37 @@
 
         function* backtrack(row) {
             if (row === size) {
-                yield { type: 'solution' };
+                yield { type: 'solution', line: 2 };
                 return true;
             }
 
             for (let col = 0; col < size; col++) {
-                yield { type: 'try', row, col };
+                yield { type: 'try', row, col, line: 3 };
 
                 if (!isSafe(cols, row, col)) {
-                    yield { type: 'conflict', row, col };
+                    yield { type: 'conflict', row, col, line: 4 };
                     continue;
                 }
 
                 cols[row] = col;
-                yield { type: 'place', row, col };
+                yield { type: 'place', row, col, line: 5 };
 
+                yield { type: 'call_solve', row, line: 6 };
                 const solved = yield* backtrack(row + 1);
-                if (solved) return true;
+                
+                if (solved) {
+                    yield { type: 'return_true', line: 7 };
+                    return true;
+                }
 
-                yield { type: 'remove', row };
+                yield { type: 'remove', row, line: 8 };
                 cols[row] = -1;
             }
+            yield { type: 'return_false', line: 11 };
             return false;
         }
 
+        yield { type: 'call_solve', line: 1 };
         yield* backtrack(0);
     }
 
