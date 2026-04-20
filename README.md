@@ -16,5 +16,8 @@
   ```\scripts```
 - Modify registry.js and index.html
 
+## Access link: 
+https://dsa-visualizer-lyart.vercel.app/
+
 
 
