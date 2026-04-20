@@ -10,7 +10,7 @@
 - To contribute fork the repository
 - Clone the repository
   ```sh
-  git clone https://github.com/MiriyalaJayanth-19/DSA_LRU_CACHE_Visualizer.git
+  git clone https://github.com/MiriyalaJayanth-19/DSA_Visualizer.git
   ```
 - Add the Algorithm script to
   ```\scripts```
